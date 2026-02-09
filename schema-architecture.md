@@ -10,3 +10,5 @@ This Spring Boot application uses both MVC and REST controllers. Thymeleaf templ
 6. Once data is retrieved from the database, it is mapped into Java model classes that the application can work with.
 7. Finally, the bound models are used in the response layer
     
+![img.png](img.png)
+![img_1.png](img_1.png)
