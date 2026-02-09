@@ -46,7 +46,7 @@ public class Doctor {
 //      - The @Size(min = 3, max = 50) annotation ensures that the specialty name is between 3 and 50 characters long.
     @NotNull(message = "Doctor's speciality cannot be null")
     @Size(min = 3, max = 50, message = "Doctor's speciality should be between 3 and 50 characters long")
-    private String speciality;
+    private String specialty;
 
 // 4. 'email' field:
 //    - Type: private String
@@ -87,7 +87,7 @@ public class Doctor {
 //      - The @ElementCollection annotation ensures that the list of time slots is stored as a separate collection in the database.
 
     @ElementCollection
-    @CollectionTable(name="doctor_appointment", joinColumns = @JoinColumn(name="doctor_id"))
+    @CollectionTable(name="doctor_available_times", joinColumns = @JoinColumn(name="doctor_id"))
     @Column(name = "available_times")
     private List<String> availableTimes;
 // 8. Getters and Setters:
@@ -109,12 +109,12 @@ public class Doctor {
         this.name = name;
     }
 
-    public String getSpeciality() {
-        return speciality;
+    public String getSpecialty() {
+        return specialty;
     }
 
-    public void setSpeciality(String speciality) {
-        this.speciality = speciality;
+    public void setSpecialty(String specialty) {
+        this.specialty = specialty;
     }
 
     public String getEmail() {
