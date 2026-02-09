@@ -1,3 +1,19 @@
+import { getDoctors, filterDoctors, saveDoctor } from './services/doctorServices.js';
+import { openModal } from './components/models.js';
+import { createDoctorCard } from './components/doctorCard.js';
+import { showBookingOverlay } from './loggedPatient.js';
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadDoctorCards();
+  document.getElementById('addDocBtn').addEventListener('click', () => {
+    openModal('addDoctor');
+  });
+
+
+
+  attachFilterListeners();
+});
+
 /*
   This script handles the admin dashboard functionality for managing doctors:
   - Loads all doctor cards

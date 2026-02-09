@@ -1,3 +1,95 @@
+import { openModal } from '../components/modal.js';
+import { API_BASE_URL } from '../config.js';
+
+const ADMIN_API = `${API_BASE_URL}/api/admin/login`;
+const DOCTOR_API = `${API_BASE_URL}/api/doctor/login`;
+
+window.onload = function() {
+  const adminLoginBtn = document.getElementById("adminLogin");
+  const doctorLoginBtn = document.getElementById("doctorLogin");  
+  
+  if (adminLoginBtn) {
+    adminLoginBtn.addEventListener('click', () => openModal('adminLogin'));
+  }
+  if (doctorLoginBtn) {
+    doctorLoginBtn.addEventListener('click', () => openModal('doctorLogin'));
+  }
+};
+
+window.adminLoginHandler = async function() {
+  const username = document.getElementById("adminUsername").value;
+  const password = document.getElementById("adminPassword").value;
+  const admin = { username, password };
+
+  try { 
+    const response = await fetch(ADMIN_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(admin)
+    });
+    if (response.ok) {
+      const data = await response.json();
+      localStorage.setItem("token", data.token);
+      selectRole('admin');
+    } else {
+      alert('Invalid admin credentials. Please try again.');
+    } 
+  } catch (error) {
+    console.error('Admin login error:', error);
+    alert('An error occurred during admin login. Please try again later.');
+  }
+};
+
+
+window.doctorLoginHandler = async function() {
+  const email = document.getElementById("doctorEmail").value;
+  const password = document.getElementById("doctorPassword").value;
+  const doctor = { email, password };
+  try {
+    const response = await fetch(DOCTOR_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(doctor)
+    });
+    if (response.ok) {
+      const data = await response.json();
+      localStorage.setItem("token", data.token);
+      selectRole('doctor');
+    } else {
+      alert('Invalid doctor credentials. Please try again.');
+    }
+  } catch (error) {
+    console.error('Doctor login error:', error);
+    alert('An error occurred during doctor login. Please try again later.');
+  }
+};
+
+function showBookingOverlay(doctor, patient) {
+  const ripple = document.createElement("div");
+  ripple.classList.add("ripple-effect");
+  document.body.appendChild(ripple);
+  setTimeout(() => ripple.classList.add("active"), 50);
+  const modalApp = document.createElement("div");
+  modalApp.classList.add("modalApp");
+  modalApp.innerHTML = `
+    <h2>Book Appointment</h2>
+    <input class="input-field" type="text" value="${patient.name}" disabled />
+    <input class="input-field" type="text" value="${doctor.name}" disabled />
+    <input class="input-field" type="text" value="${doctor.specialty}" disabled/>
+    <input class="input-field" type="email" value="${doctor.email}" disabled/>
+    <input class="input-field" type="date" id="appointment-date" />
+    <select class="input-field" id="appointment-time">
+      <option value="">Select time</option>
+      ${doctor.availableTimes.map(t => `<option value="${t}">${t}</option>`).join('')}
+    </select>
+    <button class="confirm-booking">Confirm Booking</button>
+  `;
+  document.body.appendChild(modalApp);
+  setTimeout(() => modalApp.classList.add("active"), 600);
+}
+
+
+
 /*
   Import the openModal function to handle showing login popups/modals
   Import the base API URL from the config file
