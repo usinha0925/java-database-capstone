@@ -1,11 +1,12 @@
 import { openModal } from '../components/modal.js';
 import { API_BASE_URL } from '../config.js';
-const DOCTOR_API = `${API_BASE_URL}/api/doctors`;
+const DOCTOR_API = API_BASE_URL +'/doctor';
 
 export async function getDoctors() {  
   try {
     const response = await fetch(DOCTOR_API);
     const data = await response.json();
+    //return { success: response.ok, message: data.doctors };
     return data.doctors || [];
   } catch (error) {
     console.error('Error fetching doctors:', error);
@@ -46,7 +47,7 @@ export async function filterDoctors(name, time, specialty) {
     const response = await fetch(`${DOCTOR_API}/filter?name=${name}&time=${time}&specialty=${specialty}`);
     if (response.ok) {
       const data = await response.json();
-      return data;
+      return { success: response.ok, message: data.message };
     } else {
       console.error('Error filtering doctors:', response.status);
       return { doctors: [] };

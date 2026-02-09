@@ -11,15 +11,16 @@
         <script src="./js/components/header.js" defer></script>
         <script src="./js/components/footer.js" defer></script>
     </head>
-    <body
+    <body>
         <div class="container">
             <div class="wrapper">
                 <div id="header"></div>
                 <main class="main-content">
                     <h2>Select Your Role</h2>
-                    <button id="btnAdmin" onclick="openModal('admin')">Admin</button>
-                    <button id="btnPatient" onclick="openModal('patient')">Patient</button>
-                    <button id="btnDoctor" onclick="openModal('doctor')">Doctor</button>
+                    <button id="adminLogin">Admin</button>
+                    <button id="patientLogin">Patient</button>
+                    <button id="patientSignup">Patient Register</button>
+                    <button id="doctorLogin">Doctor</button>
                 </main>
                 <div id="footer"></div>
             </div>
@@ -28,12 +29,12 @@
         <!-- Modal Structure -->
         <div id="modal" class="modal">
             <div class="modal-content">
-                <button id="closeModal" class="close">&times;</button>
-                <div id="modalBody"></div>
+                <div id="modal-body"></div>
+
             </div>
         </div>
 
-        <script type="module" src="../js/index.js" defer></script>
+        <script type="module" src="../js/services/index.js" defer></script>
     </body>
 </html>
 

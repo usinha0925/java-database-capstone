@@ -71,6 +71,9 @@ export function openModal(type) {
         <button class="dashboard-btn" id="doctorLoginBtn" >Login</button>
       `;
   }
+  modalContent+=`
+        <button id="closeModal" class="close">&times;</button>"
+        `;
 
   document.getElementById('modal-body').innerHTML = modalContent;
   document.getElementById('modal').style.display = 'block';
