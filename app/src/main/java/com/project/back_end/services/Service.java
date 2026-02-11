@@ -1,9 +1,23 @@
 package com.project.back_end.services;
 
+import com.project.back_end.DTO.Login;
+import com.project.back_end.models.Admin;
+import com.project.back_end.repo.AdminRepository;
+import com.project.back_end.repo.DoctorRepository;
+import com.project.back_end.repo.PatientRepository;
+
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+
+@org.springframework.stereotype.Service
 public class Service {
 // 1. **@Service Annotation**
 // The @Service annotation marks this class as a service component in Spring. This allows Spring to automatically detect it through component scanning
 // and manage its lifecycle, enabling it to be injected into controllers or other services using @Autowired or constructor injection.
+@Autowired
+    TokenService tokenService;
 
 // 2. **Constructor Injection for Dependencies**
 // The constructor injects all required dependencies (TokenService, Repositories, and other Services). This approach promotes loose coupling, improves testability,
@@ -13,7 +27,15 @@ public class Service {
 // This method checks if the provided JWT token is valid for a specific user. It uses the TokenService to perform the validation.
 // If the token is invalid or expired, it returns a 401 Unauthorized response with an appropriate error message. This ensures security by preventing
 // unauthorized access to protected resources.
-
+    @Autowired
+    private AdminRepository adminRepository;
+    @Autowired
+    private DoctorRepository doctorRepository;
+    @Autowired
+    private PatientRepository patientRepository;
+    public boolean validateToken(String token, String role){
+        return tokenService.validateToken(token, role);
+    }
 // 4. **validateAdmin Method**
 // This method validates the login credentials for an admin user.
 // - It first searches the admin repository using the provided username.
@@ -23,6 +45,21 @@ public class Service {
 // - If no admin is found, it also returns a 401 Unauthorized.
 // - If any unexpected error occurs during the process, a 500 Internal Server Error response is returned.
 // This method ensures that only valid admin users can access secured parts of the system.
+    public ResponseEntity<Map<String,String>> validateAdmin(Login login) {
+        Admin admin = adminRepository.findByUsername(login.getEmail());
+        if (admin != null) {
+
+            if (admin.getPassword().equals(login.getPassword())) {
+                String token = tokenService.generateToken(admin.getUsername());
+                return ResponseEntity.ok(Map.of("token", token));
+            } else {
+                return ResponseEntity.status(401).body(Map.of("error", "Invalid password"));
+            }
+        } else {
+            return ResponseEntity.status(401).body(Map.of("error", "Admin not found"));
+            
+        }
+    }
 
 // 5. **filterDoctor Method**
 // This method provides filtering functionality for doctors based on name, specialty, and available time slots.

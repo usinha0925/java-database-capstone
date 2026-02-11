@@ -1,6 +1,31 @@
 package com.project.back_end.controllers;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.project.back_end.models.Appointment;
+import com.project.back_end.models.Prescription;
+import com.project.back_end.services.AppointmentService;
+import com.project.back_end.services.PrescriptionService;
+import com.project.back_end.services.Service;
+
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Map;
+
+
+@RestController
+@RequestMapping("${api.path}prescription")
 public class PrescriptionController {
+    private final PrescriptionService prescriptionService;
+    private final Service service;
+    private final AppointmentService appointmentService;
+    
     
 // 1. Set Up the Controller Class:
 //    - Annotate the class with `@RestController` to define it as a REST API controller.
@@ -13,6 +38,11 @@ public class PrescriptionController {
 //    - Inject the shared `Service` class for token validation and role-based access control.
 //    - Inject `AppointmentService` to update appointment status after a prescription is issued.
 
+public PrescriptionController(PrescriptionService prescriptionService, Service service, AppointmentService appointmentService) {
+    this.prescriptionService = prescriptionService;
+    this.service = service;
+    this.appointmentService = appointmentService;
+}
 
 // 3. Define the `savePrescription` Method:
 //    - Handles HTTP POST requests to save a new prescription for a given appointment.
@@ -20,6 +50,28 @@ public class PrescriptionController {
 //    - Validates the token for the `"doctor"` role.
 //    - If the token is valid, updates the status of the corresponding appointment to reflect that a prescription has been added.
 //    - Delegates the saving logic to `PrescriptionService` and returns a response indicating success or failure.
+@PostMapping("/{token}")
+public String savePrescription(@RequestBody Prescription prescription, @PathVariable String token) {
+    //TODO: process POST request
+    
+    if (service.validateToken(token, "doctor")) {
+
+        // Update appointment status to indicate a prescription has been added
+        String message=prescriptionService.savePrescription(prescription);
+        if (! message.equals("Prescription saved successfully.")) {
+            return message;
+        }   
+        message=appointmentService.changeStatus(prescription.getAppointmentId(), 2); // Assuming '2' indicates 'prescribed'
+
+        if (! message.equals("Appointment status updated successfully.")) {
+            return message;
+        }
+
+        return "Prescription saved successfully.";
+    } else {
+        return "Invalid token or insufficient permissions.";
+    }
+}
 
 
 // 4. Define the `getPrescription` Method:
@@ -28,6 +80,21 @@ public class PrescriptionController {
 //    - Validates the token for the `"doctor"` role using the shared service.
 //    - If the token is valid, fetches the prescription using the `PrescriptionService`.
 //    - Returns the prescription details or an appropriate error message if validation fails.
+@GetMapping("/{appointmentId}/{token}")
+public ResponseEntity<Prescription> getPrescription(@PathVariable long appointmentId, @PathVariable String token) {
+    if (service.validateToken(token, "doctor")) {
+        Map<String,Object> p = prescriptionService.getPrescription(appointmentId);
+        if (p.get("prescription")!=null){
+            return ResponseEntity.ok((Prescription)p.get("prescription"));
+        }else{
+            return ResponseEntity.badRequest().build();
+        }
+
+    } else {
+        return ResponseEntity.status(403)
+        .build();
+    }
+}
 
 
 }

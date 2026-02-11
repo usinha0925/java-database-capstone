@@ -1,5 +1,8 @@
 package com.project.back_end.services;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class PatientService {
 // 1. **Add @Service Annotation**:
 //    - The `@Service` annotation is used to mark this class as a Spring service component. 

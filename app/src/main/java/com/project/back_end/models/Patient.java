@@ -25,7 +25,7 @@ public class Patient {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
 // 2. 'name' field:
 //    - Type: private String
@@ -82,11 +82,11 @@ public class Patient {
 //    - These methods allow access and modification of the fields of the Patient class.
 
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
