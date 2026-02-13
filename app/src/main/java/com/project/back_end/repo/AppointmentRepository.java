@@ -50,7 +50,7 @@ public interface AppointmentRepository  extends JpaRepository<Appointment, Long>
         @Param("doctorId") Long doctorId, @Param("patientName") String patientName, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
    
-        public List<Appointment> findByPatientAndDate(@Param("patientName") String patientName, @Param("date") LocalDateTime date);
+       // public List<Appointment> findByPatientAndDate(@Param("patientName") String patientName, @Param("date") LocalDateTime date);
 
 //    - **deleteAllByDoctorId**:
 //      - This method deletes all appointments associated with a particular doctor.
@@ -104,6 +104,8 @@ public interface AppointmentRepository  extends JpaRepository<Appointment, Long>
     @Transactional
     @Query("UPDATE Appointment a SET a.status = :status WHERE a.id = :id")
     public void updateStatus(@Param("status") int status, @Param("id") long id);
+
+  //  public List<Appointment> findByPatientIdAndDoctorNameAndStatus(Long patientId, String doctorName, int status);
 
 // 3. @Modifying and @Transactional annotations:
 //    - The @Modifying annotation is used to indicate that the method performs a modification operation (like DELETE or UPDATE).

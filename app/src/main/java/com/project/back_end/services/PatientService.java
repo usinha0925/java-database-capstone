@@ -107,12 +107,50 @@ public class PatientService {
 //    - This method combines filtering by doctor name and appointment status (past or future).
 //    - Converts the appointments into `AppointmentDTO` objects and returns them in the response.
 //    - Instruction: Ensure that the filter handles both doctor name and condition properly, and catches errors for invalid input.
-
+public ResponseEntity<List<AppointmentDTO>> filterByDoctorAndCondition(Long patientId, String doctorName, String condition) {
+        try {
+            int status = condition.equalsIgnoreCase("future") ? 0 : 1;
+            List<Appointment> appointments = appointmentRepository.filterByDoctorNameAndPatientId(doctorName,patientId);
+            List<AppointmentDTO> appDTO= appointments.stream()
+                    .map(appointment -> new AppointmentDTO(
+                            appointment.getId(),
+                            appointment.getDoctor().getId(),
+                            appointment.getPatient().getId(),
+                            appointment.getPatient().getName(),
+                            appointment.getPatient().getEmail(),
+                            appointment.getPatient().getPhone(),
+                            appointment.getPatient().getAddress(),
+                            appointment.getAppointmentTime(),
+                            appointment.getStatus()
+                    )).toList();
+            return ResponseEntity.status(HttpStatus.OK).body(appDTO);
+        } catch (Exception e) {
+            logger.severe("Error filtering appointments: " + e.getMessage());
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ArrayList<AppointmentDTO>()); // Return an empty list in case of error
+        }
+    }
+    
 // 8. **getPatientDetails Method**:
 //    - Retrieves patient details using the `tokenService` to extract the patient's email from the provided token.
 //    - Once the email is extracted, it fetches the corresponding patient from the `patientRepository`.
 //    - It returns the patient's information in the response body.
     //    - Instruction: Make sure that the token extraction process works correctly and patient details are fetched properly based on the extracted email.
+public ResponseEntity<Patient> getPatientDetails(String token) {
+        try {
+            String email = tokenService.extractEmail(token);
+            Patient patient = patientRepository.findByEmail(email);
+            if (patient != null) {
+                return ResponseEntity.ok(patient);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+        } catch (Exception e) {
+            logger.severe("Error fetching patient details: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 
 // 9. **Handling Exceptions and Errors**:
 //    - The service methods handle exceptions using try-catch blocks and log any issues that occur. If an error occurs during database operations, the service responds with appropriate HTTP status codes (e.g., `500 Internal Server Error`).
