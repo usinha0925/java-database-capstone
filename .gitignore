@@ -131,7 +131,9 @@ dmypy.json
 #Intellij
 .idea
 
-/submissions/GetDailyAppointmentReportByDoctor.txt
-/submissions/GetDoctorWithMostPatientsByMonth.txt
-/submissions/GetDoctorWithMostPatientsByYear.txt
-/.vscode/settings.json
+submissions
+*.doc
+*.docx
+.vscode
+.vs
+

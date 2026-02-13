@@ -9,9 +9,6 @@ import com.project.back_end.services.AppointmentService;
 import com.project.back_end.services.CMService;
 import com.project.back_end.services.DoctorService;
 import com.project.back_end.services.PatientService;
-
-import jakarta.websocket.server.PathParam;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,11 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
-
-import javax.print.Doc;
-import javax.swing.text.html.Option;
-
-import static org.springframework.util.ClassUtils.isPresent;
 
 
 @RestController
