@@ -161,7 +161,7 @@ public class DoctorService {
 //    - It generates a token for the doctor if the login is successful, otherwise returns an error message.
 //    - Instruction: Make sure to handle invalid login attempts and password mismatches properly with error responses.
 
-    @Transactional(readOnly = true)
+    @Transactional
     public String validateDoctor(String email, String password) {
         try {
             Doctor doctor = doctorRepository.findByEmail(email);
@@ -184,7 +184,7 @@ public class DoctorService {
 //    - This method is annotated with `@Transactional` to ensure that the database query and data retrieval are properly managed within a trafindByNameLikensaction.
 //    - Instruction: Ensure that available times are eagerly loaded for the doctors.
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Doctor> findDoctorByName(String name) {
         try {
             return doctorRepository.findByNameLike(name);
@@ -198,11 +198,30 @@ public class DoctorService {
 //    - The method fetches doctors matching the name and specialty criteria, then filters them based on their availability during the specified time period.
 //    - Instruction: Ensure proper filtering based on both the name and specialty as well as the specified time period.
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Doctor> filterDoctorsByNameSpecialtyAndTime(String name, String specialty, String time) {
-        try {
-            List<Doctor> doctors = doctorRepository.findByNameContainingIgnoreCaseAndSpecialtyIgnoreCase(name, specialty);
-            return filterDoctorByTime(doctors, time);
+    try {
+        List<Doctor> doctors=new ArrayList<>();
+
+            if(name == null || name.equals("null")) name = null;
+            if (specialty == null || specialty.equals("null")) specialty = null;
+            if (time == null || time.equals("null")) time = null;
+
+            if (name==null && specialty==null) {
+                doctors = getDoctors();
+            }else if (name!=null && specialty==null){
+                doctors = findDoctorByName(name);
+            }else if (name!=null && specialty!=null ){
+                doctors = filterDoctorByNameAndSpecialty(name,specialty);
+            }else if (name!=null && specialty!=null) {
+                doctors = doctorRepository.findByNameContainingIgnoreCaseAndSpecialtyIgnoreCase(name, specialty);
+            }
+            if (time != null){
+                doctors = filterDoctorByTime(doctors,time);
+            }
+            return doctors;
+
+
         } catch (Exception e) {
             return new ArrayList<>();
         }
@@ -245,7 +264,7 @@ public class DoctorService {
 //    - Fetches doctors based on partial name matching and filters the results to include only those available during the specified time period.
 //    - Instruction: Ensure that the method correctly filters doctors based on the given name and time of day (AM/PM).
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Doctor> filterDoctorByNameAndTime(String name, String time) {
         try {
             List<Doctor> doctors = findDoctorByName(name);
@@ -260,7 +279,7 @@ public class DoctorService {
 //    - It ensures that the resulting list of doctors matches both the name (case-insensitive) and the specified specialty.
 //    - Instruction: Ensure that both name and specialty are considered when filtering doctors.
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Doctor> filterDoctorByNameAndSpecialty(String name, String specialty) {
         try {
             return doctorRepository.findByNameContainingIgnoreCaseAndSpecialtyIgnoreCase(name, specialty);
@@ -274,7 +293,7 @@ public class DoctorService {
 //    - Fetches doctors based on the specified specialty and filters them based on their available time slots for AM/PM.
 //    - Instruction: Ensure the time filtering is accurately applied based on the given specialty and time period (AM/PM).
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Doctor> filterDoctorBySpecialtyAndTime(String specialty, String time) {
         try {
             List<Doctor> doctors = filterDoctorBySpecialty(specialty);
@@ -289,7 +308,7 @@ public class DoctorService {
 //    - This method fetches all doctors matching the specified specialty and returns them.
 //    - Instruction: Make sure the filtering logic works for case-insensitive specialty matching.
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Doctor> filterDoctorBySpecialty(String specialty) {
         try {
             return doctorRepository.findBySpecialtyIgnoreCase(specialty);
@@ -303,14 +322,20 @@ public class DoctorService {
 //    - The method checks all doctors' available times and returns those available during the specified time period.
 //    - Instruction: Ensure proper filtering logic to handle AM/PM time periods.
 
-    @Transactional(readOnly = true)
-    public List<Doctor> filterDoctorsByTime(String time) {
+    @Transactional
+    public List<Doctor> filterDoctorsByTime(String time){
         try {
             List<Doctor> allDoctors = getDoctors();
             return filterDoctorByTime(allDoctors, time);
         } catch (Exception e) {
             return new ArrayList<>();
         }
+    }
+
+
+    public Optional<Doctor> getDoctorById(Long doctorId) {
+        // TODO Auto-generated method stub;
+        return doctorRepository.findById(doctorId);
     }
 
 

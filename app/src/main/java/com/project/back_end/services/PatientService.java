@@ -1,9 +1,32 @@
 package com.project.back_end.services;
 
+import com.project.back_end.DTO.AppointmentDTO;
+import com.project.back_end.models.Appointment;
+import com.project.back_end.models.Patient;
+import com.project.back_end.repo.AppointmentRepository;
+import com.project.back_end.repo.PatientRepository;
+
+import jakarta.transaction.Transactional;
+
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PatientService {
+    private PatientRepository patientRepository;
+    private AppointmentRepository appointmentRepository;
+    private TokenService tokenService;
+
+    Logger logger = Logger.getLogger(PatientService.class.getName());
+
+
 // 1. **Add @Service Annotation**:
 //    - The `@Service` annotation is used to mark this class as a Spring service component. 
 //    - It will be managed by Spring's container and used for business logic related to patients and appointments.
@@ -13,23 +36,66 @@ public class PatientService {
 //    - The `PatientService` class has dependencies on `PatientRepository`, `AppointmentRepository`, and `TokenService`.
 //    - These dependencies are injected via the constructor to maintain good practices of dependency injection and testing.
 //    - Instruction: Ensure constructor injection is used for all the required dependencies.
+    public PatientService(PatientRepository patientRepository, AppointmentRepository appointmentRepository, TokenService tokenService) {
+        this.patientRepository = patientRepository;
+        this.appointmentRepository = appointmentRepository;
+        this.tokenService = tokenService;
+    }
 
 // 3. **createPatient Method**:
 //    - Creates a new patient in the database. It saves the patient object using the `PatientRepository`.
 //    - If the patient is successfully saved, the method returns `1`; otherwise, it logs the error and returns `0`.
 //    - Instruction: Ensure that error handling is done properly and exceptions are caught and logged appropriately.
-
+    public int createPatient(Patient patient) {
+        try {
+            patientRepository.save(patient);
+            return 1;
+        } catch (Exception e) {
+            logger.severe("Error creating patient: " + e.getMessage());
+            return 0;
+        }
+    }
 // 4. **getPatientAppointment Method**:
 //    - Retrieves a list of appointments for a specific patient, based on their ID.
 //    - The appointments are then converted into `AppointmentDTO` objects for easier consumption by the API client.
 //    - This method is marked as `@Transactional` to ensure database consistency during the transaction.
 //    - Instruction: Ensure that appointment data is properly converted into DTOs and the method handles errors gracefully.
 
+    @Transactional
+    public ResponseEntity<List<AppointmentDTO> > getPatientAppointment(Long patientId) {
+
+        try {
+            List<Appointment> appointments = appointmentRepository.findByPatientId(patientId);
+            List<AppointmentDTO> appDTO= appointments.stream()
+                    .map(appointment -> new AppointmentDTO(
+                    appointment.getId(),
+                    appointment.getDoctor().getId(),
+                    appointment.getPatient().getId(),
+                    appointment.getPatient().getName(),
+                    appointment.getPatient().getEmail(),
+                    appointment.getPatient().getPhone(),
+                    appointment.getPatient().getAddress(),
+                   appointment.getAppointmentTime(),
+                    appointment.getStatus()
+            )).toList();
+            return ResponseEntity.status(HttpStatus.OK).body(appDTO);
+        } catch (Exception e) {
+            logger.severe("Error fetching patient appointments: " + e.getMessage());
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ArrayList<AppointmentDTO>()); // Return an empty list in case of error
+        }
+    }
 // 5. **filterByCondition Method**:
 //    - Filters appointments for a patient based on the condition (e.g., "past" or "future").
 //    - Retrieves appointments with a specific status (0 for future, 1 for past) for the patient.
 //    - Converts the appointments into `AppointmentDTO` and returns them in the response.
 //    - Instruction: Ensure the method correctly handles "past" and "future" conditions, and that invalid conditions are caught and returned as errors.
+
+    public Patient getPatientById(Long patientId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getPatientById'");
+    }
 
 // 6. **filterByDoctor Method**:
 //    - Filters appointments for a patient based on the doctor's name.

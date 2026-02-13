@@ -1,5 +1,6 @@
 package com.project.back_end.services;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import com.project.back_end.models.Appointment;
+import com.project.back_end.models.Doctor;
 import com.project.back_end.repo.AppointmentRepository;
 import com.project.back_end.repo.DoctorRepository;
 import com.project.back_end.repo.PatientRepository;
@@ -111,7 +113,37 @@ public class AppointmentService {
             return appointmentRepository.findByDoctorIdAndAppointmentTimeBetween(doctorId, startOfDay, endOfDay);
         }
     }
+    @Transactional
+    public List<Appointment> getAppointmentsByDoctorsTokenAndDate(String token, LocalDate date, String patientName) {
+            String email = tokenService.extractEmail(token);
+            if (email == null) {
+                throw new RuntimeException("Invalid token");
+            }
+            Doctor doctor = doctorRepository.findByEmail(email);
+            if (doctor == null) {
+                throw new RuntimeException("Doctor not found");
+            }
+            Long doctorId = doctor.getId();
+            if (patientName != null && !patientName.isEmpty()) {
+                return appointmentRepository.findByDoctorIdAndPatient_NameContainingIgnoreCaseAndAppointmentTimeBetween(doctorId, patientName, date.atStartOfDay(), date.atTime(23, 59, 59));
+            } else {
+                return appointmentRepository.findByDoctorIdAndAppointmentTimeBetween(doctorId, date.atStartOfDay(), date.atTime(23, 59, 59));
+            }
+    }
 
+        @Transactional
+    public List<Appointment> getAppointmentsByDoctorsEmailAndDate(String email, LocalDate date, String patientName) {
+            Doctor doctor = doctorRepository.findByEmail(email);
+            if (doctor == null) {
+                throw new RuntimeException("Doctor not found");
+            }
+            Long doctorId = doctor.getId();
+            if (patientName != null && !patientName.isEmpty()) {
+                return appointmentRepository.findByDoctorIdAndPatient_NameContainingIgnoreCaseAndAppointmentTimeBetween(doctorId, patientName, date.atStartOfDay(), date.atTime(23, 59, 59));
+            } else {
+                return appointmentRepository.findByDoctorIdAndAppointmentTimeBetween(doctorId, date.atStartOfDay(), date.atTime(23, 59, 59));
+            }
+    }
     // 8. **Change Status Method**:
 //    - This method updates the status of an appointment by changing its value in the database.
 //    - It should be annotated with `@Transactional` to ensure the operation is executed in a single transaction.

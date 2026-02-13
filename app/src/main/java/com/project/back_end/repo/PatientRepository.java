@@ -18,12 +18,15 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 //      - Return type: Patient
 //      - Parameters: String email
 
+    public Patient findByPhone(String phone);
     public Patient findByEmail(String email);
 //    - **findByEmailOrPhone**:
 //      - This method retrieves a Patient by either their email or phone number, allowing flexibility for the search.
 //      - Return type: Patient
 //      - Parameters: String email, String phone
     public Patient findByEmailOrPhone(String email, String phone);
+
+    
 
 // 3. @Repository annotation:
 //    - The @Repository annotation marks this interface as a Spring Data JPA repository.

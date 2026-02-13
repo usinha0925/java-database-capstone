@@ -4,8 +4,8 @@ export function openModal(type) {
   if (type === 'addDoctor') {
     modalContent = `
          <h2>Add Doctor</h2>
-         <input type="text" id="doctorName" placeholder="Doctor Name" class="input-field">
-         <select id="specialization" class="input-field select-dropdown">
+         <input type="text" id="new-doc-name" placeholder="Doctor Name" class="input-field">
+         <select id="new-doc-specialty" class="input-field select-dropdown">
              <option value="">Specialization</option>
                         <option value="cardiologist">Cardiologist</option>
                         <option value="dermatologist">Dermatologist</option>
@@ -23,18 +23,11 @@ export function openModal(type) {
                         <option value="general">General Physician</option>
 
         </select>
-        <input type="email" id="doctorEmail" placeholder="Email" class="input-field">
-        <input type="password" id="doctorPassword" placeholder="Password" class="input-field">
-        <input type="text" id="doctorPhone" placeholder="Mobile No." class="input-field">
-        <div class="availability-container">
-        <label class="availabilityLabel">Select Availability:</label>
-          <div class="checkbox-group">
-              <label><input type="checkbox" name="availability" value="09:00-10:00"> 9:00 AM - 10:00 AM</label>
-              <label><input type="checkbox" name="availability" value="10:00-11:00"> 10:00 AM - 11:00 AM</label>
-              <label><input type="checkbox" name="availability" value="11:00-12:00"> 11:00 AM - 12:00 PM</label>
-              <label><input type="checkbox" name="availability" value="12:00-13:00"> 12:00 PM - 1:00 PM</label>
-          </div>
-        </div>
+        <input type="email" id="new-doc-email" placeholder="Email" class="input-field">
+        <input type="password" id="new-doc-pass" placeholder="Password" class="input-field">
+        <input type="text" id="new-doc-phone" placeholder="Mobile No." class="input-field">
+        <label class="availabilityLabel">Available Times (comma separated):</label>
+        <input type="text" id="new-doc-times" placeholder="09:00-10:00,10:00-11:00" class="input-field">
         <button class="dashboard-btn" id="saveDoctorBtn">Save</button>
       `;
   } else if (type === 'patientLogin') {
@@ -42,7 +35,7 @@ export function openModal(type) {
         <h2>Patient Login</h2>
         <input type="text" id="email" placeholder="Email" class="input-field">
         <input type="password" id="password" placeholder="Password" class="input-field">
-        <button class="dashboard-btn" id="loginBtn">Login</button>
+        <button class="dashboard-btn" id="patientLoginBtn">Login</button>
       `;
   }
   else if (type === "patientSignup") {
@@ -66,13 +59,13 @@ export function openModal(type) {
   } else if (type === 'doctorLogin') {
     modalContent = `
         <h2>Doctor Login</h2>
-        <input type="text" id="email" placeholder="Email" class="input-field">
-        <input type="password" id="password" placeholder="Password" class="input-field">
+        <input type="text" id="doctorEmail" placeholder="Email" class="input-field">
+        <input type="password" id="doctorPassword" placeholder="Password" class="input-field">
         <button class="dashboard-btn" id="doctorLoginBtn" >Login</button>
       `;
   }
   modalContent+=`
-        <button id="closeModal" class="close">&times;</button>"
+        <button id="closeModal" class="close">&times;</button>
         `;
 
   document.getElementById('modal-body').innerHTML = modalContent;
@@ -87,11 +80,12 @@ export function openModal(type) {
   }
 
   if (type === "patientLogin") {
-    document.getElementById("loginBtn").addEventListener("click", loginPatient);
+    document.getElementById("patientLoginBtn").addEventListener("click", patientLoginHandler);
   }
 
   if (type === 'addDoctor') {
-    document.getElementById('saveDoctorBtn').addEventListener('click', adminAddDoctor);
+    // The page that opens this modal (e.g., adminDashboard.js) should attach the
+    // actual save handler to avoid circular module imports.
   }
 
   if (type === 'adminLogin') {

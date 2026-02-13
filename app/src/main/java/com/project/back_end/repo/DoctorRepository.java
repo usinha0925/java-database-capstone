@@ -40,6 +40,8 @@ public interface DoctorRepository extends JpaRepository<Doctor,Long> {
     @Query("Select d from Doctor d where upper(d.name) like upper(CONCAT('%',:nameContaining,'%')) and upper(d.specialty) = upper(:specialty)")
     public List<Doctor> findByNameContainingIgnoreCaseAndSpecialtyIgnoreCase(@Param("nameContaining")String nameContaining, @Param("specialty")String specialty);
 
+    @Query("SELECT d FROM Doctor d WHERE LOWER(d.name) LIKE LOWER(CONCAT('%', :name, '%')) AND LOWER(d.specialty) = LOWER(:specialty)")
+    List<Doctor> findByNameContainingIgnoreCaseAndSpecialtyIgnoreCaseBkp(String name, String specialty);
 //    - **findBySpecialtyIgnoreCase**:
 //      - This method retrieves a list of Doctors with the specified specialty, ignoring case sensitivity.
 //      - Return type: List<Doctor>
@@ -50,6 +52,8 @@ public interface DoctorRepository extends JpaRepository<Doctor,Long> {
 // 3. @Repository annotation:
 //    - The @Repository annotation marks this interface as a Spring Data JPA repository.
 //    - Spring Data JPA automatically implements this repository, providing the necessary CRUD functionality and custom queries defined in the interface.
+
+
 
 
 

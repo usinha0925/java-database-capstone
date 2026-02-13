@@ -2,7 +2,7 @@ import { getDoctors, filterDoctors, saveDoctor } from './services/doctorServices
 import { openModal } from './components/modals.js';
 import { createDoctorCard } from './components/doctorCard.js';
 import { showBookingOverlay } from './loggedPatient.js';
-
+/**
 document.addEventListener("DOMContentLoaded", () => {
   loadDoctorCards();
   document.getElementById('addDocBtn').addEventListener('click', () => {
@@ -13,7 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   attachFilterListeners();
 });
-/**
+*/
+
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Initial Load
     loadDoctorCards();
@@ -27,10 +28,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 3. Add Doctor Modal Trigger
-    const addBtn = document.getElementById('add-doctor-btn');
-    addBtn.addEventListener('click', () => openModal('addDoctor'));
+    const addBtn = document.getElementById('addDocBtn');
+    addBtn.addEventListener('click', () => {
+        openModal('addDoctor');
+        // attach save handler after modal is inserted into DOM
+        setTimeout(() => {
+            const saveBtn = document.getElementById('saveDoctorBtn');
+            if (saveBtn) saveBtn.addEventListener('click', adminAddDoctor);
+        }, 0);
+    });
 });
-*/
+
 
 /**
  * Fetch and display all doctors
@@ -70,7 +78,7 @@ async function filterDoctorsOnChange() {
  * Helper to clear and rebuild the doctor list
  */
 function renderDoctorCards(doctors) {
-    const container = document.getElementById('doctor-container');
+    const container = document.getElementById('content');
     container.innerHTML = ''; // Clear current content
 
     doctors.forEach(doctor => {
@@ -82,8 +90,8 @@ function renderDoctorCards(doctors) {
 /**
  * Collect form data and save a new doctor
  */
-async function adminAddDoctor() {
-    const token = localStorage.getItem('authToken');
+window.adminAddDoctor =  async function adminAddDoctor() {
+    const token = localStorage.getItem('token');
     if (!token) {
         alert("Session expired. Please log in again.");
         return;
@@ -102,7 +110,8 @@ async function adminAddDoctor() {
         const success = await saveDoctor(doctorData, token);
         if (success) {
             alert("Doctor added successfully!");
-            closeModal('addDoctor');
+            const modal = document.getElementById('modal');
+            if (modal) modal.style.display = 'none';
             window.location.reload();
         }
     } catch (error) {

@@ -17,7 +17,7 @@ public class DashboardController {
 // 2. Autowire the Shared Service:
 //    - Inject the common `Service` class, which provides the token validation logic used to authorize access to dashboards.
     @Autowired
-    com.project.back_end.services.Service service;
+    com.project.back_end.services.CMService service;
 
 // 3. Define the `adminDashboard` Method:
 //    - Handles HTTP GET requests to `/adminDashboard/{token}`.
@@ -40,10 +40,10 @@ public class DashboardController {
 //    - Validates the token using the shared service for the `"doctor"` role.
 //    - If the token is valid, forwards the user to the `"doctor/doctorDashboard"` view.
 //    - If the token is invalid, redirects to the root URL.
-@GetMapping("/doctorsDashboard/{token}")
+@GetMapping("/doctorDashboard/{token}")
 public String doctorsDashboard(@PathVariable String token){
     if (service.validateToken(token,"doctor")){
-        return "doctorsDashboard/doctorDashboard";
+        return "doctor/doctorDashboard";
     }else{
         return "/";
     }

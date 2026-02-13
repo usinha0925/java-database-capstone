@@ -49,6 +49,9 @@ public interface AppointmentRepository  extends JpaRepository<Appointment, Long>
    public List<Appointment> findByDoctorIdAndPatient_NameContainingIgnoreCaseAndAppointmentTimeBetween(
         @Param("doctorId") Long doctorId, @Param("patientName") String patientName, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
+   
+        public List<Appointment> findByPatientAndDate(@Param("patientName") String patientName, @Param("date") LocalDateTime date);
+
 //    - **deleteAllByDoctorId**:
 //      - This method deletes all appointments associated with a particular doctor.
 //      - It is marked as @Modifying and @Transactional, which makes it a modification query, ensuring that the operation is executed within a transaction.

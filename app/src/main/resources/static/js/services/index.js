@@ -1,25 +1,37 @@
 import {openModal} from '../components/modals.js';
 import {API_BASE_URL} from '../config/config.js';
 
-const ADMIN_API = `${API_BASE_URL}/api/admin/login`;
-const DOCTOR_API = `${API_BASE_URL}/api/doctor/login`;
+const ADMIN_API = `${API_BASE_URL}/admin/adminLogin`;
+const DOCTOR_API = `${API_BASE_URL}/doctor/login`;
+const PATIENT_API = `${API_BASE_URL}/patient/login`;
 
 window.onload = function() {
-  const adminLoginBtn = document.getElementById("adminLogin");
-  const doctorLoginBtn = document.getElementById("doctorLogin");  
-  
-  if (adminLoginBtn) {
-    adminLoginBtn.addEventListener('click', () => openModal('adminLogin'));
-  }
-  if (doctorLoginBtn) {
-    doctorLoginBtn.addEventListener('click', () => openModal('doctorLogin'));
-  }
+    const adminLoginBtn = document.getElementById("adminLogin");
+    const doctorLoginBtn = document.getElementById("doctorLogin");
+
+    const patientLoginBtn = document.getElementById("patientLogin");
+    const patientSignupBtn = document.getElementById("patientSignup");
+
+    if (adminLoginBtn) {
+        adminLoginBtn.addEventListener('click', () => openModal('adminLogin'));
+    }
+    if (doctorLoginBtn) {
+        doctorLoginBtn.addEventListener('click', () => openModal('doctorLogin'));
+    }
+
+    if (patientLoginBtn) {
+        patientLoginBtn.addEventListener('click', () => openModal('patientLogin'));
+    }
+
+    if (patientSignupBtn) {
+        patientSignupBtn.addEventListener('click', () => openModal('patientSignupBtn'));
+    }
 };
 
 window.adminLoginHandler = async function() {
-  const username = document.getElementById("username").value;
+  const email = document.getElementById("username").value;
   const password = document.getElementById("password").value;
-  const admin = { username, password };
+  const admin = { email, password };
 
   try { 
     const response = await fetch(ADMIN_API, {
@@ -63,7 +75,28 @@ window.doctorLoginHandler = async function() {
     alert('An error occurred during doctor login. Please try again later.');
   }
 };
-
+window.patientLoginHandler = async function() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const patient = { email, password };
+  try {
+    const response = await fetch(PATIENT_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(patient)
+    });
+    if (response.ok) {
+      const data = await response.json();
+      localStorage.setItem("token", data.token);
+      selectRole('patient');
+    } else {
+      alert('Invalid patient credentials. Please try again.');
+    }
+  } catch (error) {
+    console.error('Patient login error:', error);
+    alert('An error occurred during patient login. Please try again later.');
+  }
+};
 function showBookingOverlay(doctor, patient) {
   const ripple = document.createElement("div");
   ripple.classList.add("ripple-effect");

@@ -1,6 +1,6 @@
-import { showBookingOverlay } from './loggedPatient.js';
-import { deleteDoctor } from './docotrServices.js';
-import { fetchPatientDetails } from './patientServices.js';
+import { showBookingOverlay } from '../loggedPatient.js';
+import { deleteDoctor } from '../services/doctorServices.js';
+import { getPatientData } from '../services/patientServices.js';
 
 /**
  * Creates and returns a DOM element for a single doctor card
@@ -22,7 +22,7 @@ export function createDoctorCard(doctor) {
 
   // 4. Create and set doctor details
   const name = document.createElement('h3');
-  name.textContent = `Dr. ${doctor.name}`;
+  name.textContent = `${doctor.name}`;
 
   const spec = document.createElement('p');
   spec.className = 'specialization';

@@ -7,7 +7,7 @@ import com.project.back_end.models.Appointment;
 import com.project.back_end.models.Prescription;
 import com.project.back_end.services.AppointmentService;
 import com.project.back_end.services.PrescriptionService;
-import com.project.back_end.services.Service;
+import com.project.back_end.services.CMService;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +23,7 @@ import java.util.Map;
 @RequestMapping("${api.path}prescription")
 public class PrescriptionController {
     private final PrescriptionService prescriptionService;
-    private final Service service;
+    private final CMService service;
     private final AppointmentService appointmentService;
     
     
@@ -38,7 +38,7 @@ public class PrescriptionController {
 //    - Inject the shared `Service` class for token validation and role-based access control.
 //    - Inject `AppointmentService` to update appointment status after a prescription is issued.
 
-public PrescriptionController(PrescriptionService prescriptionService, Service service, AppointmentService appointmentService) {
+public PrescriptionController(PrescriptionService prescriptionService, CMService service, AppointmentService appointmentService) {
     this.prescriptionService = prescriptionService;
     this.service = service;
     this.appointmentService = appointmentService;

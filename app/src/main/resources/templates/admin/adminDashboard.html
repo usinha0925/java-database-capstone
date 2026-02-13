@@ -16,19 +16,21 @@
             <div class="wrapper">
                 <div id="header"></div>
                 <main class="main-content">
-                    <input type="text" id="searchBar" placeholder="Search...">
-                    <select id="timeFilter">
+                    <input type="text" id="search-bar" placeholder="Search...">
+                    <select id="time-filter">
                         <option value="">All Times</option>
                         <option value="AM">AM</option>
                         <option value="PM">PM</option>
                     </select>
-                    <select id="specialtyFilter">
+                    <select id="specialty-filter">
                         <option value="">All Specialties</option>
                         <option value="Cardiologist">Cardiologist</option>
                         <option value="Dentist">Dentist</option>
                         <!-- Add more specialties as needed -->
                     </select>
-                    <div id="content"></div>
+                    <div id="content">
+                        <div id="doctor-container"></div>
+                    </div>
                 </main>
                 <div id="footer"></div>
             </div>
@@ -37,14 +39,14 @@
         <!-- Modal Structure -->
         <div id="modal" class="modal">
             <div class="modal-content">
-                <button id="closeModal" class="close">&times;</button>
                 <div id="modal-body"></div>
             </div>
         </div>
 
-        <script type="module" src="../../static/js/adminDashboard.js" defer></script>
-        <script type="module" src="../../static/js/doctorCard.js" defer></script>
+        <script type="module" src="../js/adminDashboard.js" defer></script>
+        <script type="module" src="../js/components/doctorCard.js" defer></script>
     </body>
+</html>
 <!-- adminDashboard.html -->
 
 <!-- 

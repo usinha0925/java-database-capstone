@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import com.project.back_end.DTO.Login;
 import com.project.back_end.models.Doctor;
 import com.project.back_end.services.DoctorService;
-import com.project.back_end.services.Service;
+import com.project.back_end.services.CMService;
 
 import jakarta.validation.Valid;
 
@@ -21,15 +21,15 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("${api.path}doctor")
+@RequestMapping("${api.path}/doctor")
 @Validated
 public class DoctorController {
 
     private final DoctorService doctorService;
-    private final Service service;
+    private final CMService service;
 
     @Autowired
-    public DoctorController(DoctorService doctorService, Service service) {
+    public DoctorController(DoctorService doctorService, CMService service) {
         this.doctorService = doctorService;
         this.service = service;
     }
@@ -125,7 +125,7 @@ public class DoctorController {
 //    - Handles HTTP POST requests for doctor login.
 //    - Accepts a validated `Login` DTO containing credentials.
 //    - Delegates authentication to the `DoctorService` and returns login status and token information.
-    @PostMapping("doctorLogin")
+    @PostMapping("login")
     public ResponseEntity<Map<String, Object>> doctorLogin(@Valid @RequestBody Login login) {
         Map<String, Object> response = new HashMap<>();
         try {
@@ -223,16 +223,17 @@ public class DoctorController {
 //    - Calls the shared `Service` to perform filtering logic and returns matching doctors in the response.
 
     @GetMapping("/filter/{name}/{time}/{speciality}")
-    public ResponseEntity<List<Doctor>> filter(
-            @PathVariable(required = false) String name,
-            @PathVariable(required = false) String time,
-            @PathVariable(required = false) String speciality) {
+    public ResponseEntity<Map<String,Object>>filter(
+            @PathVariable String name,
+            @PathVariable String time,
+            @PathVariable String speciality) {
 
         Map<String, Object> response = new HashMap<>();
 
         try {
             List<Doctor> filteredDoctors = doctorService.filterDoctorsByNameSpecialtyAndTime(name, speciality, time);
-            return ResponseEntity.ok(filteredDoctors);
+            response.put("doctors", filteredDoctors);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.put("status", "error");
             response.put("message", "Error filtering doctors: " + e.getMessage());

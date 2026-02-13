@@ -189,9 +189,9 @@
 
   .close {
     color: #aaa;
-    position: absolute;
-    right: 20px;
-    top: 15px;
+    position: relative;
+    left: 60px;
+    top: 20px;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;

@@ -86,7 +86,7 @@ public class Doctor {
 //      - Each time slot is represented as a string (e.g., "09:00-10:00", "10:00-11:00").
 //      - The @ElementCollection annotation ensures that the list of time slots is stored as a separate collection in the database.
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name="doctor_available_times", joinColumns = @JoinColumn(name="doctor_id"))
     @Column(name = "available_times")
     private List<String> availableTimes;
