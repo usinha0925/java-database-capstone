@@ -116,6 +116,7 @@ public class AppointmentService {
     @Transactional
     public List<Appointment> getAppointmentsByDoctorsTokenAndDate(String token, LocalDate date, String patientName) {
             String email = tokenService.extractEmail(token);
+
             if (email == null) {
                 throw new RuntimeException("Invalid token");
             }
@@ -124,7 +125,7 @@ public class AppointmentService {
                 throw new RuntimeException("Doctor not found");
             }
             Long doctorId = doctor.getId();
-            if (patientName != null && !patientName.isEmpty()) {
+            if (patientName != null && !patientName.isEmpty() && !patientName.equals("null")) {
                 return appointmentRepository.findByDoctorIdAndPatient_NameContainingIgnoreCaseAndAppointmentTimeBetween(doctorId, patientName, date.atStartOfDay(), date.atTime(23, 59, 59));
             } else {
                 return appointmentRepository.findByDoctorIdAndAppointmentTimeBetween(doctorId, date.atStartOfDay(), date.atTime(23, 59, 59));

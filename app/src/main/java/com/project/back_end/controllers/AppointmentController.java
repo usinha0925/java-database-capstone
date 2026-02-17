@@ -9,6 +9,7 @@ import com.project.back_end.services.AppointmentService;
 import com.project.back_end.services.CMService;
 import com.project.back_end.services.DoctorService;
 import com.project.back_end.services.PatientService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -54,11 +56,26 @@ public class AppointmentController {
 //    - If the token is valid, returns appointments for the given patient on the specified date.
 //    - If the token is invalid or expired, responds with the appropriate message and status code.
     @GetMapping("/{date}/{patientName}/{token}")
-    public ResponseEntity<Map<String, Object>> getAppointments(@RequestParam LocalDate date, @RequestParam String patientName, @RequestParam String token) {
+    public ResponseEntity<Map <String,Object>> getAppointments(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, @PathVariable String patientName, @PathVariable String token)
+    {
         Map<String, Object> response = new HashMap<>();
         if (service.validateToken(token, "doctor")) {
             List<Appointment> appointments = appointmentService.getAppointmentsByDoctorsTokenAndDate(token, date, patientName);
-            response.put("appointments", appointments);
+            List<AppointmentDTO> appointmentDTOs = appointments.stream()
+                    .map(app -> new AppointmentDTO(
+ //  public AppointmentDTO(Long id, Long doctorId, Long patientId, String patientName, String patientEmail, String patientPhone, String patientAddress, LocalDateTime appointmentTime, int status) {
+                            //
+                            app.getId(),
+                            app.getDoctor().getId(), // Simplified doctor info
+                            app.getPatient().getId(),
+                            app.getPatient().getName(),
+                            app.getPatient().getEmail(),
+                            app.getPatient().getPhone(),
+                            app.getPatient().getAddress(),
+                            app.getAppointmentTime(),
+                            app.getStatus()))
+                    .collect(Collectors.toList());
+            response.put("appointments", appointmentDTOs);
         } else {
             response.put("error", "Invalid or expired token. Please log in again.");
             return ResponseEntity.badRequest().body(response);
